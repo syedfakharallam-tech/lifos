@@ -1,172 +1,384 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LifeOS - Daily Routine Tracker</title>
+
+<title>LifeOS - Daily Habit Tracker</title>
 
 <style>
+
+/* ==============================
+   1. GLOBAL DESIGN
+============================== */
+
 * {
     box-sizing: border-box;
     font-family: Arial, sans-serif;
 }
 
+:root {
+    --bg: #0B0F19;
+    --card: #111827;
+    --input: #0B1220;
+    --text: #F1F5F9;
+    --muted: #94A3B8;
+    --accent: #38BDF8;
+    --green: #4ADE80;
+    --red: #F87171;
+    --border: rgba(255,255,255,0.06);
+}
+
 body {
     margin: 0;
-    padding: 20px;
-    background: #101827;
-    color: white;
+    padding: 28px 20px;
+    background: var(--bg);
+    color: var(--text);
 }
 
 .container {
-    max-width: 850px;
+    max-width: 950px;
     margin: auto;
 }
 
+/* ==============================
+   2. HEADER
+============================== */
+
 header {
-    text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
 header h1 {
-    color: #38bdf8;
-    font-size: 36px;
+    color: var(--text);
+    font-size: 30px;
+    margin-bottom: 8px;
 }
 
-header p, .small {
-    color: #94a3b8;
+header p {
+    color: var(--muted);
+    font-size: 14px;
 }
+
+.language-box {
+    max-width: 220px;
+    margin-top: 18px;
+}
+
+/* ==============================
+   3. CARDS
+============================== */
 
 .card {
-    background: #1e293b;
-    padding: 20px;
+    background: var(--card);
+    padding: 22px;
+    border: 1px solid var(--border);
     border-radius: 12px;
     margin-bottom: 18px;
 }
 
 h2 {
-    color: #38bdf8;
-    margin-top: 0;
-    font-size: 21px;
+    color: var(--text);
+    margin: 0 0 18px;
+    font-size: 18px;
+    font-weight: 600;
 }
+
+/* ==============================
+   4. INPUTS
+============================== */
 
 input, select, textarea {
     width: 100%;
     padding: 12px;
-    margin: 7px 0;
-    border: 1px solid #475569;
-    background: #0f172a;
-    color: white;
-    border-radius: 7px;
-    font-size: 15px;
+    margin: 8px 0 16px;
+    border: 1px solid var(--border);
+    background: var(--input);
+    color: var(--text);
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
 }
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: rgba(56,189,248,0.5);
+}
+
+label {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* ==============================
+   5. BUTTONS
+============================== */
 
 button {
     border: none;
-    border-radius: 7px;
-    padding: 10px 14px;
-    margin: 3px;
+    border-radius: 6px;
+    padding: 8px 11px;
     cursor: pointer;
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 500;
+    transition: 0.2s ease;
 }
 
-.yes { background: #16a34a; color: white; }
-.no { background: #dc2626; color: white; }
-.pending { background: #64748b; color: white; }
-.delete { background: #475569; color: white; }
-.add { background: #0284c7; color: white; }
-
-.submit, .whatsapp, .copy {
-    width: 100%;
-    padding: 14px;
-    font-size: 16px;
-    margin-top: 12px;
-    color: white;
+button:hover {
+    opacity: 0.85;
 }
 
-.submit { background: #0d9488; }
-.whatsapp { background: #16a34a; }
-.copy { background: #2563eb; }
+/* ==============================
+   6. HABIT ROWS
+============================== */
 
 .task {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px 0;
-    border-bottom: 1px solid #334155;
+    gap: 12px;
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--border);
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.task:nth-child(even) {
+    background: rgba(255,255,255,0.018);
+}
+
+.task:hover {
+    background: rgba(255,255,255,0.045);
 }
 
 .task-name {
-    flex: 1;
-    min-width: 130px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+    font-size: 14px;
+    line-height: 1.5;
 }
+
+/* Status indicator */
+
+.status-dot {
+    width: 19px;
+    height: 19px;
+    flex-shrink: 0;
+    border: 1.5px solid #64748B;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-dot.yes {
+    color: var(--green);
+    border-color: var(--green);
+}
+
+.status-dot.no {
+    color: var(--red);
+    border-color: var(--red);
+}
+
+.status-dot.skip {
+    color: var(--muted);
+    border-color: var(--muted);
+}
+
+/* Habit actions */
 
 .task-buttons {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
+    gap: 5px;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.2s ease;
 }
 
-.task-status {
-    color: #cbd5e1;
-    font-size: 12px;
-    margin: 0 5px;
+.task:hover .task-buttons,
+.task:focus-within .task-buttons {
+    opacity: 1;
+    visibility: visible;
 }
+
+.task-buttons button {
+    background: transparent;
+    color: var(--muted);
+    padding: 6px 8px;
+}
+
+.task-buttons .complete-action:hover {
+    color: var(--green);
+    background: rgba(74,222,128,0.08);
+}
+
+.task-buttons .skip-action:hover {
+    color: var(--accent);
+    background: rgba(56,189,248,0.08);
+}
+
+.task-buttons .fail-action:hover {
+    color: var(--red);
+    background: rgba(248,113,113,0.08);
+}
+
+.task-buttons .delete {
+    color: #64748B;
+    margin-left: 5px;
+}
+
+.task-buttons .delete:hover {
+    color: var(--red);
+}
+
+/* ==============================
+   7. PROGRESS STATISTICS
+============================== */
 
 .stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 20px;
+    padding: 10px 0;
 }
 
 .stat {
-    background: #0f172a;
-    padding: 15px 5px;
-    text-align: center;
-    border-radius: 8px;
+    background: transparent;
+    padding: 8px 0;
+    text-align: left;
 }
 
 .stat strong {
     display: block;
-    font-size: 24px;
-    color: #38bdf8;
+    font-size: 29px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 7px;
 }
 
 .stat span {
-    color: #94a3b8;
+    color: var(--muted);
     font-size: 12px;
 }
+
+/* ==============================
+   8. ADD HABIT
+============================== */
+
+.add {
+    background: #164E63;
+    color: #BAE6FD;
+    padding: 12px 18px;
+}
+
+.add:hover {
+    background: #155E75;
+}
+
+/* ==============================
+   9. REPORT BUTTONS
+============================== */
+
+.submit,
+.whatsapp,
+.copy {
+    width: 100%;
+    padding: 14px;
+    font-size: 14px;
+    margin-top: 12px;
+    color: white;
+}
+
+.submit {
+    background: #164E63;
+    color: #BAE6FD;
+}
+
+.whatsapp {
+    background: #166534;
+    color: #DCFCE7;
+}
+
+.copy {
+    background: #1E3A8A;
+    color: #DBEAFE;
+}
+
+/* ==============================
+   10. REPORT DISPLAY
+============================== */
 
 #report {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     line-height: 1.9;
-    background: #0f172a;
-    border: 1px solid #475569;
+    background: var(--input);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 16px;
     margin-top: 15px;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .small {
-    font-size: 13px;
+    color: var(--muted);
+    font-size: 12px;
     line-height: 1.7;
 }
 
-.language-box {
-    max-width: 250px;
-    margin: 15px auto;
+#pendingCount {
+    margin-top: 12px;
 }
 
-@media(max-width: 550px) {
-    body { padding: 10px; }
-    .stats { grid-template-columns: repeat(2, 1fr); }
-    header h1 { font-size: 29px; }
+/* ==============================
+   11. MOBILE RESPONSIVENESS
+============================== */
+
+@media (max-width: 650px) {
+
+    body {
+        padding: 16px 12px;
+    }
+
+    .card {
+        padding: 17px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .task {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .task-buttons {
+        opacity: 1;
+        visibility: visible;
+        padding-left: 28px;
+        flex-wrap: wrap;
+    }
+
+    header h1 {
+        font-size: 27px;
+    }
+
+    .stat strong {
+        font-size: 25px;
+    }
 }
+
 </style>
 </head>
 
@@ -174,20 +386,38 @@ button {
 
 <div class="container">
 
+<!-- ==============================
+     HEADER
+============================== -->
+
 <header>
+
     <h1>LifeOS 🌙</h1>
+
     <p id="subtitle"></p>
 
     <div class="language-box">
+
         <label id="languageLabel"></label>
+
         <select id="language">
+
             <option value="en">English 🇬🇧</option>
             <option value="ur">اردو 🇵🇰</option>
+
         </select>
+
     </div>
+
 </header>
 
+
+<!-- ==============================
+     DATE AND TIME
+============================== -->
+
 <div class="card">
+
     <h2 id="dateHeading"></h2>
 
     <label id="dateLabel"></label>
@@ -200,77 +430,141 @@ button {
     <input type="time" id="sleepTime">
 
     <p class="small" id="dateHelp"></p>
+
 </div>
 
+
+<!-- ==============================
+     MAIN ROUTINES
+============================== -->
+
 <div class="card">
+
     <h2 id="mainHeading"></h2>
+
     <div id="mainTasks"></div>
+
 </div>
 
+
+<!-- ==============================
+     OTHER HABITS
+============================== -->
+
 <div class="card">
+
     <h2 id="otherHeading"></h2>
+
     <div id="otherTasks"></div>
+
 </div>
 
+
+<!-- ==============================
+     ADD NEW HABIT
+============================== -->
+
 <div class="card">
+
     <h2 id="addHeading"></h2>
 
     <input type="text" id="newTask">
 
     <select id="taskCategory">
+
         <option value="main" id="mainOption"></option>
         <option value="other" id="otherOption"></option>
+
     </select>
 
     <button class="add" id="addButton" onclick="addTask()"></button>
+
     <p class="small" id="customHelp"></p>
+
 </div>
 
+
+<!-- ==============================
+     DAILY NOTES
+============================== -->
+
 <div class="card">
+
     <h2 id="noteHeading"></h2>
+
     <textarea id="dailyNote" rows="3"></textarea>
+
 </div>
 
+
+<!-- ==============================
+     DAILY STATISTICS
+============================== -->
+
 <div class="card">
+
     <h2 id="statsHeading"></h2>
 
     <div class="stats">
+
         <div class="stat">
+
             <strong id="total">0</strong>
             <span id="totalLabel"></span>
+
         </div>
 
         <div class="stat">
+
             <strong id="completed">0</strong>
             <span id="completedLabel"></span>
+
         </div>
 
         <div class="stat">
+
             <strong id="missed">0</strong>
             <span id="missedLabel"></span>
+
         </div>
 
         <div class="stat">
+
             <strong id="percentage">0%</strong>
             <span id="percentageLabel"></span>
+
         </div>
+
     </div>
 
     <p class="small" id="pendingCount"></p>
+
 </div>
 
+
+<!-- ==============================
+     DAILY REPORT
+============================== -->
+
 <div class="card">
+
     <h2 id="reportHeading"></h2>
 
-    <button class="submit" id="generateButton"
-        onclick="generateReport()"></button>
+    <button
+        class="submit"
+        id="generateButton"
+        onclick="generateReport()">
+    </button>
 
     <div id="reportSection" style="display:none">
 
         <div id="report"></div>
 
-        <button class="copy" id="copyButton"
-            onclick="copyReport()"></button>
+        <button
+            class="copy"
+            id="copyButton"
+            onclick="copyReport()">
+        </button>
 
         <h2 id="whatsappHeading" style="margin-top:25px"></h2>
 
@@ -278,184 +572,418 @@ button {
 
         <input type="tel" id="phone">
 
-        <button class="whatsapp" id="sendButton"
-            onclick="sendWhatsApp()"></button>
+        <button
+            class="whatsapp"
+            id="sendButton"
+            onclick="sendWhatsApp()">
+        </button>
 
         <p class="small" id="whatsappHelp"></p>
+
     </div>
+
 </div>
 
 </div>
+
 
 <script>
 
-// ------------------------------------
-// 1. TRANSLATIONS
-// ------------------------------------
+/* ==================================
+   1. TRANSLATIONS
+================================== */
 
 const translations = {
 
     en: {
+
         subtitle: "Build better habits. Track your daily progress.",
+
         language: "Select Language",
+
         dateHeading: "📅 Date and Time",
         dateLabel: "Date",
         wakeLabel: "Wake-up Time",
         sleepLabel: "Sleep Time",
+
         dateHelp: "Each day's record is saved separately.",
+
         mainHeading: "🕌 Prayers and Daily Routine",
         otherHeading: "✨ Other Habits",
+
         addHeading: "➕ Add New Habit",
+
         mainOption: "Prayers and Daily Routine",
         otherOption: "Other Habits",
+
         addButton: "Add Habit",
         newTask: "Enter a new habit...",
+
         customHelp: "Custom habits keep the name you enter.",
+
         noteHeading: "📝 Daily Notes",
         notePlaceholder: "Write a note about your day...",
+
         statsHeading: "📊 Daily Progress",
-        total: "Total",
+
+        total: "Total Tasks",
         completed: "Completed",
-        missed: "Missed",
-        percentage: "Completion",
+        missed: "Failed",
+        percentage: "Success Rate",
+
         pending: "Not marked",
+        skipped: "Skipped",
+
         reportHeading: "📨 Daily Report",
+
         generate: "Generate Daily Report",
+
         copy: "📋 Copy Report",
+
         whatsappHeading: "Send Report on WhatsApp",
+
         phoneLabel: "Recipient's WhatsApp Number",
+
         phonePlaceholder: "Example: 923001234567",
+
         send: "Send on WhatsApp",
-        whatsappHelp: "Enter the country code with the number. WhatsApp will open with your report ready. Press Send inside WhatsApp.",
-        yes: "✓ Completed",
-        no: "✗ Missed",
-        blank: "— Not marked",
+
+        whatsappHelp:
+        "Enter the country code with the number. WhatsApp will open with your report ready. Press Send inside WhatsApp.",
+
+        completeAction: "Complete",
+        skip: "Skip",
+        failAction: "Fail",
+
         completedWord: "COMPLETED",
-        missedWord: "MISSED",
+        missedWord: "FAILED",
         blankWord: "NOT MARKED",
+        skippedWord: "SKIPPED",
+
         dateReport: "Date",
         wakeReport: "Wake-up time",
         sleepReport: "Sleep time",
+
         mainReport: "🕌 PRAYERS AND DAILY ROUTINE",
         otherReport: "✨ OTHER HABITS",
+
         noteReport: "📝 DAILY NOTE",
+
         summary: "📊 DAILY SUMMARY",
+
         totalReport: "Total habits",
         completedReport: "Completed",
-        missedReport: "Missed",
+        missedReport: "Failed",
+        skippedReport: "Skipped",
         pendingReport: "Not marked",
-        rate: "Completion rate",
+
+        rate: "Success rate",
+
         footer: "May Allah grant consistency and sincerity. Ameen.",
+
         generated: "Generated by LifeOS",
+
         noName: "Please enter a habit name.",
         noDate: "Please select a date.",
         noTasks: "Please add at least one habit.",
+
         confirmDelete: "Are you sure you want to delete this habit?",
+
         delete: "Delete",
+
         invalidPhone: "Enter a valid phone number with country code.",
+
         generateFirst: "Please generate the report first.",
+
         copied: "Report copied!",
+
         copyError: "Could not copy the report. Please select and copy it manually."
+
     },
 
+
     ur: {
+
         subtitle: "اچھی عادات اپنائیں، روزانہ کارکردگی کا جائزہ لیں۔",
+
         language: "زبان منتخب کریں",
+
         dateHeading: "📅 تاریخ اور اوقات",
         dateLabel: "تاریخ",
         wakeLabel: "جاگنے کا وقت",
         sleepLabel: "سونے کا وقت",
+
         dateHelp: "ہر دن کا ریکارڈ الگ محفوظ ہوگا۔",
+
         mainHeading: "🕌 نماز اور روزانہ معمولات",
         otherHeading: "✨ دیگر معمولات",
+
         addHeading: "➕ نیا معمول شامل کریں",
+
         mainOption: "نماز اور روزانہ معمولات",
         otherOption: "دیگر معمولات",
+
         addButton: "معمول شامل کریں",
         newTask: "نئے معمول کا نام لکھیں...",
+
         customHelp: "آپ کا شامل کیا ہوا معمول اسی نام سے دکھایا جائے گا۔",
+
         noteHeading: "📝 آج کی کیفیت / نوٹ",
         notePlaceholder: "آج کے دن کے بارے میں کچھ لکھیں...",
+
         statsHeading: "📊 روزانہ کارکردگی",
+
         total: "کل معمولات",
         completed: "مکمل",
-        missed: "نامکمل",
-        percentage: "تکمیل",
+        missed: "ناکام",
+        percentage: "کامیابی کی شرح",
+
         pending: "درج نہیں",
+        skipped: "چھوڑ دیے گئے",
+
         reportHeading: "📨 روزانہ رپورٹ",
+
         generate: "مکمل رپورٹ تیار کریں",
+
         copy: "📋 رپورٹ کاپی کریں",
+
         whatsappHeading: "WhatsApp پر رپورٹ بھیجیں",
+
         phoneLabel: "وصول کرنے والے کا WhatsApp نمبر",
+
         phonePlaceholder: "مثلاً 923001234567",
+
         send: "WhatsApp پر بھیجیں",
-        whatsappHelp: "ملک کے کوڈ کے ساتھ نمبر درج کریں۔ WhatsApp میں رپورٹ تیار کھلے گی۔ وہاں Send دبائیں۔",
-        yes: "✓ مکمل",
-        no: "✗ نامکمل",
-        blank: "— درج نہیں",
+
+        whatsappHelp:
+        "ملک کے کوڈ کے ساتھ نمبر درج کریں۔ WhatsApp میں رپورٹ تیار کھلے گی۔ وہاں Send دبائیں۔",
+
+        completeAction: "مکمل",
+        skip: "چھوڑ دیں",
+        failAction: "ناکام",
+
         completedWord: "مکمل",
-        missedWord: "نامکمل",
+        missedWord: "ناکام",
         blankWord: "درج نہیں",
+        skippedWord: "چھوڑ دیا",
+
         dateReport: "تاریخ",
         wakeReport: "جاگنے کا وقت",
         sleepReport: "سونے کا وقت",
+
         mainReport: "🕌 نماز اور روزانہ معمولات",
         otherReport: "✨ دیگر معمولات",
+
         noteReport: "📝 آج کی کیفیت",
+
         summary: "📊 مجموعی جائزہ",
+
         totalReport: "کل معمولات",
         completedReport: "مکمل",
-        missedReport: "نامکمل",
+        missedReport: "ناکام",
+        skippedReport: "چھوڑ دیے گئے",
         pendingReport: "درج نہیں",
-        rate: "تکمیل کی شرح",
+
+        rate: "کامیابی کی شرح",
+
         footer: "اللہ تعالیٰ استقامت اور اخلاص عطا فرمائے۔ آمین۔",
+
         generated: "LifeOS کی جانب سے تیار کردہ",
+
         noName: "براہ کرم معمول کا نام لکھیں۔",
         noDate: "براہ کرم تاریخ منتخب کریں۔",
         noTasks: "کم از کم ایک معمول شامل کریں۔",
+
         confirmDelete: "کیا آپ یہ معمول حذف کرنا چاہتے ہیں؟",
+
         delete: "حذف",
+
         invalidPhone: "درست WhatsApp نمبر ملک کے کوڈ کے ساتھ درج کریں۔",
+
         generateFirst: "پہلے رپورٹ تیار کریں۔",
+
         copied: "رپورٹ کاپی ہوگئی!",
+
         copyError: "رپورٹ کاپی نہیں ہوسکی۔ اسے خود منتخب کرکے کاپی کریں۔"
+
     }
+
 };
 
-// ------------------------------------
-// 2. DEFAULT HABITS
-// ------------------------------------
+
+/* ==================================
+   2. DEFAULT HABITS
+================================== */
 
 const defaultTasks = [
-    {id:1, en:"Tahajjud", ur:"تہجد", category:"main"},
-    {id:2, en:"Fajr prayer in congregation", ur:"فجر باجماعت", category:"main"},
-    {id:3, en:"Surah Yaseen", ur:"سورۃ یٰسین", category:"main"},
-    {id:4, en:"Morning Azkar", ur:"صبح کی تسبیحات", category:"main"},
-    {id:5, en:"Ishraq", ur:"اشراق", category:"main"},
-    {id:6, en:"Chasht", ur:"چاشت", category:"main"},
-    {id:7, en:"Zuhr prayer in congregation", ur:"ظہر باجماعت", category:"main"},
-    {id:8, en:"Asr prayer in congregation", ur:"عصر باجماعت", category:"main"},
-    {id:9, en:"Evening Azkar", ur:"شام کی تسبیحات", category:"main"},
-    {id:10, en:"Maghrib prayer in congregation", ur:"مغرب باجماعت", category:"main"},
-    {id:11, en:"Awwabin", ur:"اوابین", category:"main"},
-    {id:12, en:"Surah Waqiah", ur:"سورۃ الواقعہ", category:"main"},
-    {id:13, en:"Isha prayer in congregation", ur:"عشاء باجماعت", category:"main"},
-    {id:14, en:"Surah Mulk", ur:"سورۃ الملک", category:"main"},
 
-    {id:15, en:"Ayat-ul-Kursi after prayer", ur:"آیت الکرسی بعد از نماز", category:"other"},
-    {id:16, en:"Fatimi Tasbeeh", ur:"فاطمی تسبیحات", category:"other"},
-    {id:17, en:"Recite one Juz of Quran", ur:"ایک پارہ تلاوت", category:"other"},
-    {id:18, en:"Control sleep to no more than seven hours", ur:"سات گھنٹوں سے زیادہ نیند پر کنٹرول", category:"other"},
-    {id:19, en:"Guarding the gaze", ur:"نظر کی حفاظت", category:"other"},
-    {id:20, en:"Guarding the tongue", ur:"زبان کی حفاظت", category:"other"},
-    {id:21, en:"Send daily routine report", ur:"روزانہ معمولات بھیجنا", category:"other"},
-    {id:22, en:"Ayat-ul-Kursi before sleeping", ur:"سوتے وقت آیت الکرسی", category:"other"},
-    {id:23, en:"Recite the four Quls three times and blow", ur:"چاروں قل تین مرتبہ پڑھ کر دم کرنا", category:"other"}
+    {
+        id: 1,
+        en: "Tahajjud",
+        ur: "تہجد",
+        category: "main"
+    },
+
+    {
+        id: 2,
+        en: "Fajr prayer in congregation",
+        ur: "فجر باجماعت",
+        category: "main"
+    },
+
+    {
+        id: 3,
+        en: "Surah Yaseen",
+        ur: "سورۃ یٰسین",
+        category: "main"
+    },
+
+    {
+        id: 4,
+        en: "Morning Azkar",
+        ur: "صبح کی تسبیحات",
+        category: "main"
+    },
+
+    {
+        id: 5,
+        en: "Ishraq",
+        ur: "اشراق",
+        category: "main"
+    },
+
+    {
+        id: 6,
+        en: "Chasht",
+        ur: "چاشت",
+        category: "main"
+    },
+
+    {
+        id: 7,
+        en: "Zuhr prayer in congregation",
+        ur: "ظہر باجماعت",
+        category: "main"
+    },
+
+    {
+        id: 8,
+        en: "Asr prayer in congregation",
+        ur: "عصر باجماعت",
+        category: "main"
+    },
+
+    {
+        id: 9,
+        en: "Evening Azkar",
+        ur: "شام کی تسبیحات",
+        category: "main"
+    },
+
+    {
+        id: 10,
+        en: "Maghrib prayer in congregation",
+        ur: "مغرب باجماعت",
+        category: "main"
+    },
+
+    {
+        id: 11,
+        en: "Awwabin",
+        ur: "اوابین",
+        category: "main"
+    },
+
+    {
+        id: 12,
+        en: "Surah Waqiah",
+        ur: "سورۃ الواقعہ",
+        category: "main"
+    },
+
+    {
+        id: 13,
+        en: "Isha prayer in congregation",
+        ur: "عشاء باجماعت",
+        category: "main"
+    },
+
+    {
+        id: 14,
+        en: "Surah Mulk",
+        ur: "سورۃ الملک",
+        category: "main"
+    },
+
+    {
+        id: 15,
+        en: "Ayat-ul-Kursi after prayer",
+        ur: "آیت الکرسی بعد از نماز",
+        category: "other"
+    },
+
+    {
+        id: 16,
+        en: "Fatimi Tasbeeh",
+        ur: "فاطمی تسبیحات",
+        category: "other"
+    },
+
+    {
+        id: 17,
+        en: "Recite one Juz of Quran",
+        ur: "ایک پارہ تلاوت",
+        category: "other"
+    },
+
+    {
+        id: 18,
+        en: "Control sleep to no more than seven hours",
+        ur: "سات گھنٹوں سے زیادہ نیند پر کنٹرول",
+        category: "other"
+    },
+
+    {
+        id: 19,
+        en: "Guarding the gaze",
+        ur: "نظر کی حفاظت",
+        category: "other"
+    },
+
+    {
+        id: 20,
+        en: "Guarding the tongue",
+        ur: "زبان کی حفاظت",
+        category: "other"
+    },
+
+    {
+        id: 21,
+        en: "Send daily routine report",
+        ur: "روزانہ معمولات بھیجنا",
+        category: "other"
+    },
+
+    {
+        id: 22,
+        en: "Ayat-ul-Kursi before sleeping",
+        ur: "سوتے وقت آیت الکرسی",
+        category: "other"
+    },
+
+    {
+        id: 23,
+        en: "Recite the four Quls three times and blow",
+        ur: "چاروں قل تین مرتبہ پڑھ کر دم کرنا",
+        category: "other"
+    }
+
 ];
 
-// ------------------------------------
-// 3. LOAD DATA
-// ------------------------------------
+
+/* ==================================
+   3. LOAD SAVED DATA
+================================== */
 
 let language = localStorage.getItem("lifeos_language") || "en";
 
@@ -469,17 +997,24 @@ let records = JSON.parse(
 
 let reportText = "";
 
-// ------------------------------------
-// 4. LANGUAGE FUNCTIONS
-// ------------------------------------
+
+/* ==================================
+   4. LANGUAGE FUNCTIONS
+================================== */
 
 function t(key) {
+
     return translations[language][key];
+
 }
 
+
 function getTaskName(task) {
+
     return task[language] || task.en || task.ur;
+
 }
+
 
 function setLanguage() {
 
@@ -488,554 +1023,1044 @@ function setLanguage() {
     localStorage.setItem("lifeos_language", language);
 
     document.documentElement.lang = language;
-    document.documentElement.dir = language === "ur" ? "rtl" : "ltr";
+
+    document.documentElement.dir =
+        language === "ur" ? "rtl" : "ltr";
 
     applyLanguage();
+
     renderTasks();
+
 }
+
 
 function applyLanguage() {
 
     const ids = {
+
         subtitle: "subtitle",
         language: "languageLabel",
+
         dateHeading: "dateHeading",
         dateLabel: "dateLabel",
         wakeLabel: "wakeLabel",
         sleepLabel: "sleepLabel",
+
         dateHelp: "dateHelp",
+
         mainHeading: "mainHeading",
         otherHeading: "otherHeading",
+
         addHeading: "addHeading",
+
         mainOption: "mainOption",
         otherOption: "otherOption",
+
         addButton: "addButton",
+
         customHelp: "customHelp",
+
         noteHeading: "noteHeading",
+
         statsHeading: "statsHeading",
+
         total: "totalLabel",
         completed: "completedLabel",
         missed: "missedLabel",
         percentage: "percentageLabel",
+
         reportHeading: "reportHeading",
+
         generate: "generateButton",
         copy: "copyButton",
+
         whatsappHeading: "whatsappHeading",
         phoneLabel: "phoneLabel",
+
         send: "sendButton",
         whatsappHelp: "whatsappHelp"
+
     };
 
+
     for (const key in ids) {
+
         document.getElementById(ids[key]).textContent = t(key);
+
     }
 
+
     document.getElementById("newTask").placeholder = t("newTask");
+
     document.getElementById("dailyNote").placeholder = t("notePlaceholder");
+
     document.getElementById("phone").placeholder = t("phonePlaceholder");
 
     document.getElementById("language").value = language;
+
 }
 
-// ------------------------------------
-// 5. DATE FUNCTIONS
-// ------------------------------------
+
+/* ==================================
+   5. DATE FUNCTIONS
+================================== */
 
 function todayDate() {
 
     const now = new Date();
 
     return now.getFullYear() + "-" +
+
         String(now.getMonth() + 1).padStart(2, "0") + "-" +
+
         String(now.getDate()).padStart(2, "0");
+
 }
+
 
 document.getElementById("date").value = todayDate();
 
+
 function selectedDate() {
+
     return document.getElementById("date").value;
+
 }
+
 
 function getDayRecord() {
 
     const date = selectedDate();
 
     if (!records[date]) {
+
         records[date] = {
+
             statuses: {},
+
             wakeTime: "",
+
             sleepTime: "",
+
             note: ""
+
         };
+
     }
+
 
     if (!records[date].statuses) {
+
         records[date].statuses = {};
+
     }
 
+
     return records[date];
+
 }
 
-// ------------------------------------
-// 6. SAVE DATA
-// ------------------------------------
+
+/* ==================================
+   6. SAVE DATA
+================================== */
 
 function saveData() {
 
     localStorage.setItem(
+
         "lifeos_bilingual_tasks",
+
         JSON.stringify(tasks)
+
     );
 
+
     localStorage.setItem(
+
         "lifeos_bilingual_records",
+
         JSON.stringify(records)
+
     );
+
 }
+
 
 function saveDailyDetails() {
 
     const record = getDayRecord();
 
     record.wakeTime = document.getElementById("wakeTime").value;
+
     record.sleepTime = document.getElementById("sleepTime").value;
+
     record.note = document.getElementById("dailyNote").value;
 
     saveData();
+
 }
 
-// ------------------------------------
-// 7. RENDER TASKS
-// ------------------------------------
+
+/* ==================================
+   7. RENDER TASKS
+================================== */
 
 function renderTasks() {
 
     const record = getDayRecord();
 
     const main = document.getElementById("mainTasks");
+
     const other = document.getElementById("otherTasks");
 
     main.innerHTML = "";
+
     other.innerHTML = "";
+
 
     tasks.forEach(task => {
 
         const status = record.statuses[task.id] || "";
 
+
+        // Create habit row
+
         const row = document.createElement("div");
+
         row.className = "task";
 
+
+        // Habit name
+
         const name = document.createElement("div");
+
         name.className = "task-name";
-        name.textContent = getTaskName(task);
 
-        const buttons = document.createElement("div");
-        buttons.className = "task-buttons";
 
-        const label = document.createElement("span");
-        label.className = "task-status";
+        // Status circle
+
+        const indicator = document.createElement("span");
+
+        indicator.className = "status-dot";
+
 
         if (status === "yes") {
-            label.textContent = t("yes");
-        } else if (status === "no") {
-            label.textContent = t("no");
-        } else {
-            label.textContent = t("blank");
+
+            indicator.classList.add("yes");
+
+            indicator.textContent = "✓";
+
         }
 
-        const yes = document.createElement("button");
-        yes.className = "yes";
-        yes.textContent = "✓";
-        yes.title = t("completed");
-        yes.onclick = () => markTask(task.id, "yes");
+        else if (status === "no") {
 
-        const no = document.createElement("button");
-        no.className = "no";
-        no.textContent = "✗";
-        no.title = t("missed");
-        no.onclick = () => markTask(task.id, "no");
+            indicator.classList.add("no");
 
-        const blank = document.createElement("button");
-        blank.className = "pending";
-        blank.textContent = "—";
-        blank.title = t("pending");
-        blank.onclick = () => markTask(task.id, "");
+            indicator.textContent = "×";
+
+        }
+
+        else if (status === "skip") {
+
+            indicator.classList.add("skip");
+
+            indicator.textContent = "−";
+
+        }
+
+
+        const taskText = document.createElement("span");
+
+        taskText.textContent = getTaskName(task);
+
+
+        name.append(indicator, taskText);
+
+
+        // Action buttons
+
+        const buttons = document.createElement("div");
+
+        buttons.className = "task-buttons";
+
+
+        const complete = document.createElement("button");
+
+        complete.className = "complete-action";
+
+        complete.textContent = t("completeAction");
+
+        complete.onclick = () => markTask(task.id, "yes");
+
+
+        const skip = document.createElement("button");
+
+        skip.className = "skip-action";
+
+        skip.textContent = t("skip");
+
+        skip.onclick = () => markTask(task.id, "skip");
+
+
+        const fail = document.createElement("button");
+
+        fail.className = "fail-action";
+
+        fail.textContent = t("failAction");
+
+        fail.onclick = () => markTask(task.id, "no");
+
 
         const del = document.createElement("button");
+
         del.className = "delete";
-        del.textContent = t("delete");
+
+        del.textContent = "×";
+
+        del.title = t("delete");
+
         del.onclick = () => deleteTask(task.id);
 
-        buttons.append(label, yes, no, blank, del);
+
+        buttons.append(complete, skip, fail, del);
+
+
         row.append(name, buttons);
 
+
         if (task.category === "main") {
+
             main.appendChild(row);
-        } else {
-            other.appendChild(row);
+
         }
+
+        else {
+
+            other.appendChild(row);
+
+        }
+
     });
 
-    document.getElementById("wakeTime").value = record.wakeTime || "";
-    document.getElementById("sleepTime").value = record.sleepTime || "";
-    document.getElementById("dailyNote").value = record.note || "";
+
+    // Restore daily details
+
+    document.getElementById("wakeTime").value =
+        record.wakeTime || "";
+
+    document.getElementById("sleepTime").value =
+        record.sleepTime || "";
+
+    document.getElementById("dailyNote").value =
+        record.note || "";
+
 
     updateStats();
+
     hideReport();
+
 }
 
-// ------------------------------------
-// 8. MARK TASK
-// ------------------------------------
+
+/* ==================================
+   8. MARK TASK
+================================== */
 
 function markTask(id, status) {
 
     const record = getDayRecord();
 
+
     if (status === "") {
+
         delete record.statuses[id];
-    } else {
-        record.statuses[id] = status;
+
     }
 
+    else {
+
+        record.statuses[id] = status;
+
+    }
+
+
     saveData();
+
     renderTasks();
+
 }
 
-// ------------------------------------
-// 9. ADD TASK
-// ------------------------------------
+
+/* ==================================
+   9. ADD TASK
+================================== */
 
 function addTask() {
 
     const input = document.getElementById("newTask");
+
     const name = input.value.trim();
 
+
     if (!name) {
+
         alert(t("noName"));
+
         return;
+
     }
 
+
     const newId = tasks.length
+
         ? Math.max(...tasks.map(task => task.id)) + 1
+
         : 1;
 
+
     const newTask = {
+
         id: newId,
+
         en: name,
+
         ur: name,
+
         category: document.getElementById("taskCategory").value
+
     };
+
 
     tasks.push(newTask);
 
+
     input.value = "";
 
+
     saveData();
+
     renderTasks();
+
 }
 
-// ------------------------------------
-// 10. DELETE TASK
-// ------------------------------------
+
+/* ==================================
+   10. DELETE TASK
+================================== */
 
 function deleteTask(id) {
 
-    if (!confirm(t("confirmDelete"))) return;
+    if (!confirm(t("confirmDelete"))) {
+
+        return;
+
+    }
+
 
     tasks = tasks.filter(task => task.id !== id);
 
+
     for (const date in records) {
-        delete records[date].statuses[id];
+
+        if (records[date].statuses) {
+
+            delete records[date].statuses[id];
+
+        }
+
     }
 
+
     saveData();
+
     renderTasks();
+
 }
 
-// ------------------------------------
-// 11. STATISTICS
-// ------------------------------------
+
+/* ==================================
+   11. STATISTICS
+================================== */
 
 function calculateStats() {
 
     const record = getDayRecord();
 
     let completed = 0;
+
     let missed = 0;
+
+    let skipped = 0;
+
     let pending = 0;
+
 
     tasks.forEach(task => {
 
         const status = record.statuses[task.id];
 
+
         if (status === "yes") {
+
             completed++;
-        } else if (status === "no") {
-            missed++;
-        } else {
-            pending++;
+
         }
+
+        else if (status === "no") {
+
+            missed++;
+
+        }
+
+        else if (status === "skip") {
+
+            skipped++;
+
+        }
+
+        else {
+
+            pending++;
+
+        }
+
     });
+
 
     const total = tasks.length;
 
+
     const percentage = total > 0
+
         ? Math.round((completed / total) * 1000) / 10
+
         : 0;
 
-    return {total, completed, missed, pending, percentage};
+
+    return {
+
+        total,
+
+        completed,
+
+        missed,
+
+        skipped,
+
+        pending,
+
+        percentage
+
+    };
+
 }
+
 
 function updateStats() {
 
     const s = calculateStats();
 
+
     document.getElementById("total").textContent = s.total;
+
     document.getElementById("completed").textContent = s.completed;
+
     document.getElementById("missed").textContent = s.missed;
-    document.getElementById("percentage").textContent = s.percentage + "%";
+
+    document.getElementById("percentage").textContent =
+        s.percentage + "%";
+
 
     document.getElementById("pendingCount").textContent =
-        t("pending") + ": " + s.pending;
+
+        t("pending") + ": " + s.pending +
+
+        " | " +
+
+        t("skipped") + ": " + s.skipped;
+
 }
 
-// ------------------------------------
-// 12. FORMAT DATE AND TIME
-// ------------------------------------
+
+/* ==================================
+   12. FORMAT DATE AND TIME
+================================== */
 
 function formatDate(date) {
 
-    if (!date) return language === "ur" ? "درج نہیں" : "Not entered";
+    if (!date) {
+
+        return language === "ur" ? "درج نہیں" : "Not entered";
+
+    }
+
 
     const parts = date.split("-");
 
+
     const d = new Date(
+
         Number(parts[0]),
+
         Number(parts[1]) - 1,
+
         Number(parts[2])
+
     );
 
+
     return new Intl.DateTimeFormat(
+
         language === "ur" ? "ur-PK" : "en-GB",
+
         {
+
             day: "numeric",
+
             month: "long",
+
             year: "numeric"
+
         }
+
     ).format(d);
+
 }
+
 
 function formatTime(time) {
 
-    if (!time) return language === "ur" ? "درج نہیں" : "Not entered";
+    if (!time) {
 
-    const [hour, minute] = time.split(":");
-    let h = Number(hour);
+        return language === "ur" ? "درج نہیں" : "Not entered";
 
-    if (language === "ur") {
-        const period = h >= 12 ? "شام" : "صبح";
-        h = h % 12 || 12;
-        return `${h}:${minute} ${period}`;
     }
 
+
+    const [hour, minute] = time.split(":");
+
+    let h = Number(hour);
+
+
+    if (language === "ur") {
+
+        const period = h >= 12 ? "شام" : "صبح";
+
+        h = h % 12 || 12;
+
+        return `${h}:${minute} ${period}`;
+
+    }
+
+
     const period = h >= 12 ? "PM" : "AM";
+
     h = h % 12 || 12;
 
+
     return `${h}:${minute} ${period}`;
+
 }
 
-// ------------------------------------
-// 13. GENERATE REPORT
-// ------------------------------------
+
+/* ==================================
+   13. GENERATE REPORT
+================================== */
 
 function generateReport() {
 
     if (!selectedDate()) {
+
         alert(t("noDate"));
+
         return;
+
     }
 
+
     if (tasks.length === 0) {
+
         alert(t("noTasks"));
+
         return;
+
     }
+
 
     saveDailyDetails();
 
+
     const record = getDayRecord();
+
     const stats = calculateStats();
 
     const lines = [];
 
+
+    // Report title
+
     lines.push(
+
         language === "ur"
+
             ? "🌙 *روزانہ معمولات کی رپورٹ*"
+
             : "🌙 *DAILY ROUTINE REPORT*"
+
     );
+
 
     lines.push("━━━━━━━━━━━━━━━━━━");
 
-    lines.push(t("dateReport") + ": " + formatDate(selectedDate()));
-    lines.push(t("wakeReport") + ": " + formatTime(record.wakeTime));
-    lines.push(t("sleepReport") + ": " + formatTime(record.sleepTime));
+
+    lines.push(
+
+        t("dateReport") + ": " + formatDate(selectedDate())
+
+    );
+
+
+    lines.push(
+
+        t("wakeReport") + ": " + formatTime(record.wakeTime)
+
+    );
+
+
+    lines.push(
+
+        t("sleepReport") + ": " + formatTime(record.sleepTime)
+
+    );
+
+
+    // Add habit categories
 
     function addCategory(category, heading) {
 
         lines.push("");
+
         lines.push("*" + heading + "*");
+
         lines.push("━━━━━━━━━━━━━━━━━━");
+
 
         let number = 1;
 
-        tasks.filter(task => task.category === category)
+
+        tasks
+
+        .filter(task => task.category === category)
+
         .forEach(task => {
 
             const status = record.statuses[task.id];
 
+
             let symbol = "➖";
+
             let label = t("blankWord");
 
+
             if (status === "yes") {
+
                 symbol = "✅";
+
                 label = t("completedWord");
-            } else if (status === "no") {
-                symbol = "❌";
-                label = t("missedWord");
+
             }
 
+            else if (status === "no") {
+
+                symbol = "❌";
+
+                label = t("missedWord");
+
+            }
+
+            else if (status === "skip") {
+
+                symbol = "⏭️";
+
+                label = t("skippedWord");
+
+            }
+
+
             lines.push(
-                number + ". " + getTaskName(task) +
-                " — " + symbol + " " + label
+
+                number + ". " +
+
+                getTaskName(task) +
+
+                " — " +
+
+                symbol + " " +
+
+                label
+
             );
 
+
             number++;
+
         });
+
     }
+
 
     addCategory("main", t("mainReport"));
+
     addCategory("other", t("otherReport"));
 
+
+    // Daily note
+
     if (record.note.trim()) {
+
         lines.push("");
+
         lines.push("*" + t("noteReport") + "*");
+
         lines.push(record.note.trim());
+
     }
 
+
+    // Statistics
+
     lines.push("");
+
     lines.push("*" + t("summary") + "*");
+
     lines.push("━━━━━━━━━━━━━━━━━━");
 
-    lines.push(t("totalReport") + ": " + stats.total);
-    lines.push("✅ " + t("completedReport") + ": " + stats.completed);
-    lines.push("❌ " + t("missedReport") + ": " + stats.missed);
-    lines.push("➖ " + t("pendingReport") + ": " + stats.pending);
-    lines.push(t("rate") + ": " + stats.percentage + "%");
+
+    lines.push(
+
+        t("totalReport") + ": " + stats.total
+
+    );
+
+
+    lines.push(
+
+        "✅ " + t("completedReport") + ": " + stats.completed
+
+    );
+
+
+    lines.push(
+
+        "❌ " + t("missedReport") + ": " + stats.missed
+
+    );
+
+
+    lines.push(
+
+        "⏭️ " + t("skippedReport") + ": " + stats.skipped
+
+    );
+
+
+    lines.push(
+
+        "➖ " + t("pendingReport") + ": " + stats.pending
+
+    );
+
+
+    lines.push(
+
+        t("rate") + ": " + stats.percentage + "%"
+
+    );
+
 
     lines.push("");
+
     lines.push(t("footer"));
+
     lines.push("_" + t("generated") + "_");
+
 
     reportText = lines.join("\n");
 
+
     document.getElementById("report").textContent = reportText;
+
     document.getElementById("reportSection").style.display = "block";
 
+
     saveData();
+
 }
 
-// ------------------------------------
-// 14. COPY REPORT
-// ------------------------------------
+
+/* ==================================
+   14. COPY REPORT
+================================== */
 
 async function copyReport() {
 
     if (!reportText) {
+
         alert(t("generateFirst"));
+
         return;
+
     }
+
 
     try {
+
         await navigator.clipboard.writeText(reportText);
+
         alert(t("copied"));
-    } catch (error) {
-        alert(t("copyError"));
+
     }
+
+    catch (error) {
+
+        alert(t("copyError"));
+
+    }
+
 }
 
-// ------------------------------------
-// 15. WHATSAPP
-// ------------------------------------
+
+/* ==================================
+   15. WHATSAPP SHARING
+================================== */
 
 function sendWhatsApp() {
 
     if (!reportText) {
+
         alert(t("generateFirst"));
+
         return;
+
     }
+
 
     const phone = document.getElementById("phone").value;
+
     const digits = phone.replace(/\D/g, "");
 
+
     if (digits.length < 10 || digits.length > 15) {
+
         alert(t("invalidPhone"));
+
         return;
+
     }
 
+
     const url =
+
         "https://wa.me/" + digits +
+
         "?text=" + encodeURIComponent(reportText);
 
+
     window.open(url, "_blank");
+
 }
 
-// ------------------------------------
-// 16. HIDE OLD REPORT
-// ------------------------------------
+
+/* ==================================
+   16. HIDE OLD REPORT
+================================== */
 
 function hideReport() {
 
     reportText = "";
 
     document.getElementById("reportSection").style.display = "none";
+
 }
 
-// ------------------------------------
-// 17. EVENT LISTENERS
-// ------------------------------------
+
+/* ==================================
+   17. EVENT LISTENERS
+================================== */
 
 document.getElementById("language").addEventListener(
+
     "change",
+
     setLanguage
+
 );
+
 
 document.getElementById("date").addEventListener(
+
     "change",
+
     renderTasks
+
 );
+
 
 document.getElementById("wakeTime").addEventListener(
+
     "change",
+
     saveDailyDetails
+
 );
+
 
 document.getElementById("sleepTime").addEventListener(
+
     "change",
+
     saveDailyDetails
+
 );
+
 
 document.getElementById("dailyNote").addEventListener(
+
     "input",
+
     saveDailyDetails
+
 );
 
-// ------------------------------------
-// 18. START APPLICATION
-// ------------------------------------
+
+// Press Enter to add a habit
+
+document.getElementById("newTask").addEventListener(
+
+    "keydown",
+
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            addTask();
+
+        }
+
+    }
+
+);
+
+
+/* ==================================
+   18. START APPLICATION
+================================== */
 
 document.getElementById("language").value = language;
 
 applyLanguage();
+
 renderTasks();
 
 </script>
